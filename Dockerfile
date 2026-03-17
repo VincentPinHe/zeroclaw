@@ -6,8 +6,8 @@ FROM rust:1.94-slim@sha256:7d3701660d2aa7101811ba0c54920021452aa60e5bae073b79c2b
 WORKDIR /app
 
 # Install build dependencies
-RUN --mount=type=cache,id=cache_apt,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,id=lib_apt,target=/var/lib/apt,sharing=locked \
+RUN --mount=type=cache,id=s/3cc80be5-7d10-45ba-b3d9-548c2bb750a7-cache_apt,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,id=s/3cc80be5-7d10-45ba-b3d9-548c2bb750a7-lib_apt,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y \
         pkg-config \
     && rm -rf /var/lib/apt/lists/*
@@ -21,9 +21,9 @@ RUN mkdir -p src benches crates/robot-kit/src \
     && echo "" > src/lib.rs \
     && echo "fn main() {}" > benches/agent_benchmarks.rs \
     && echo "pub fn placeholder() {}" > crates/robot-kit/src/lib.rs
-RUN --mount=type=cache,id=zeroclaw-cargo-registry,target=/usr/local/cargo/registry,sharing=locked \
-    --mount=type=cache,id=zeroclaw-cargo-git,target=/usr/local/cargo/git,sharing=locked \
-    --mount=type=cache,id=zeroclaw-target,target=/app/target,sharing=locked \
+RUN --mount=type=cache,id=s/3cc80be5-7d10-45ba-b3d9-548c2bb750a7-zeroclaw-cargo-registry,target=/usr/local/cargo/registry,sharing=locked \
+    --mount=type=cache,id=s/3cc80be5-7d10-45ba-b3d9-548c2bb750a7-zeroclaw-cargo-git,target=/usr/local/cargo/git,sharing=locked \
+    --mount=type=cache,id=s/3cc80be5-7d10-45ba-b3d9-548c2bb750a7-zeroclaw-target,target=/app/target,sharing=locked \
     cargo build --release --locked
 RUN rm -rf src benches crates/robot-kit/src
 
@@ -52,9 +52,9 @@ RUN mkdir -p web/dist && \
         '</html>' > web/dist/index.html; \
     fi
 RUN touch src/main.rs
-RUN --mount=type=cache,id=zeroclaw-cargo-registry,target=/usr/local/cargo/registry,sharing=locked \
-    --mount=type=cache,id=zeroclaw-cargo-git,target=/usr/local/cargo/git,sharing=locked \
-    --mount=type=cache,id=zeroclaw-target,target=/app/target,sharing=locked \
+RUN --mount=type=cache,id=s/3cc80be5-7d10-45ba-b3d9-548c2bb750a7-zeroclaw-cargo-registry,target=/usr/local/cargo/registry,sharing=locked \
+    --mount=type=cache,id=s/3cc80be5-7d10-45ba-b3d9-548c2bb750a7-zeroclaw-cargo-git,target=/usr/local/cargo/git,sharing=locked \
+    --mount=type=cache,id=s/3cc80be5-7d10-45ba-b3d9-548c2bb750a7-zeroclaw-target,target=/app/target,sharing=locked \
     rm -rf target/release/.fingerprint/zeroclawlabs-* \
            target/release/deps/zeroclawlabs-* \
            target/release/incremental/zeroclawlabs-* && \
