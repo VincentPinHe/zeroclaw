@@ -34,23 +34,29 @@ COPY crates/ crates/
 COPY firmware/ firmware/
 COPY web/ web/
 COPY *.rs .
+# 直接在构建镜像时打包前端
+# 这一步会确保 web/dist 文件夹被真正创建出来
+RUN apt-get update && apt-get install -y nodejs npm && \
+    cd web && npm install && npm run build && \
+    apt-get purge -y nodejs npm && apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 # Keep release builds resilient when frontend dist assets are not prebuilt in Git.
-RUN mkdir -p web/dist && \
-    if [ ! -f web/dist/index.html ]; then \
-      printf '%s\n' \
-        '<!doctype html>' \
-        '<html lang="en">' \
-        '  <head>' \
-        '    <meta charset="utf-8" />' \
-        '    <meta name="viewport" content="width=device-width,initial-scale=1" />' \
-        '    <title>ZeroClaw Dashboard</title>' \
-        '  </head>' \
-        '  <body>' \
-        '    <h1>ZeroClaw Dashboard Unavailable</h1>' \
-        '    <p>Frontend assets are not bundled in this build. Build the web UI to populate <code>web/dist</code>.</p>' \
-        '  </body>' \
-        '</html>' > web/dist/index.html; \
-    fi
+#RUN mkdir -p web/dist && \
+#    if [ ! -f web/dist/index.html ]; then \
+#      printf '%s\n' \
+#        '<!doctype html>' \
+#        '<html lang="en">' \
+#        '  <head>' \
+#        '    <meta charset="utf-8" />' \
+#        '    <meta name="viewport" content="width=device-width,initial-scale=1" />' \
+#        '    <title>ZeroClaw Dashboard</title>' \
+#        '  </head>' \
+#        '  <body>' \
+#        '    <h1>ZeroClaw Dashboard Unavailable</h1>' \
+#        '    <p>Frontend assets are not bundled in this build. Build the web UI to populate <code>web/dist</code>.</p>' \
+#        '  </body>' \
+#        '</html>' > web/dist/index.html; \
+#    fi
 RUN touch src/main.rs
 RUN --mount=type=cache,id=s/3cc80be5-7d10-45ba-b3d9-548c2bb750a7-zeroclaw-cargo-registry,target=/usr/local/cargo/registry,sharing=locked \
     --mount=type=cache,id=s/3cc80be5-7d10-45ba-b3d9-548c2bb750a7-zeroclaw-cargo-git,target=/usr/local/cargo/git,sharing=locked \
